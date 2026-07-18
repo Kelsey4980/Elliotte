@@ -45,7 +45,7 @@ class NotionMapper:
             size = properties["Size"]["select"]["name"]
 
         # Completed checkbox
-        completed = properties[" "]["checkbox"]
+        is_completed = properties["Completed"]["checkbox"]
 
         return Task(
             id=page["id"],
@@ -55,5 +55,5 @@ class NotionMapper:
             course=course,
             task_type=task_type,
             size=size,
-            completed=completed,
+            is_completed=is_completed,
         )
