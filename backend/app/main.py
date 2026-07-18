@@ -2,6 +2,7 @@ from pprint import pprint
 
 from app.clients.notion.client import NotionClient
 from app.clients import notion
+from app.clients.notion.mapper import NotionMapper
 
 
 def main():
@@ -14,21 +15,28 @@ def main():
     
     # results = notion.client.search()
 
-    pages = notion.get_pages()
+    pages = notion.get_pages(page_size=5)
 
     print(f"Successfully retrieved {len(pages)} pages!\n")
 
-    for page in pages[:5]:
-        print("=" * 60)
+    tasks = [NotionMapper.to_task(page) for page in pages]
 
-        print("ID:", page["id"])
+    print(f"Successfully retrieved {len(tasks)} tasks\n")
 
-        properties = page["properties"]
+    for task in tasks:
+        print(task)
 
-        print("Properties:")
+    # for page in pages:
+    #     print("=" * 60)
 
-        for name, value in properties.items():
-            print(f"  • {name}: {value['type']}")
+    #     print("ID:", page["id"])
+
+    #     properties = page["properties"]
+
+    #     print("Properties:")
+
+    #     for name, value in properties.items():
+    #         print(f"  • {name}: {value['type']}")
 
 
 if __name__ == "__main__":

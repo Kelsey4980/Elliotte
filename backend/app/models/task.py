@@ -23,7 +23,23 @@ class Task(BaseModel):
 
     size: Optional[str] = None
 
-    completed: bool = False
+    is_completed: bool = False
+
+    @property
+    def estimated_hours(self) -> float:
+        """
+        Converts the task size into an estimated duration.
+        """
+
+        mapping = {
+            "XS": 0.5,
+            "S": 1,
+            "M": 2,
+            "L": 4,
+            "XL": 8,
+        }
+
+        return mapping.get(self.size, 1)
 
 
     # Previous Model (save for future reference)

@@ -31,13 +31,17 @@ class NotionClient:
             database_id=self.data_source_id
         )
 
-    def get_pages(self):
+    def get_pages(self, page_size=5, **kwargs):
         """
-        Returns every page (task) in the data source.
+        Returns pages from the configured Notion data source.
         """
-        return self.client.data_sources.query(
-            data_source_id=self.data_source_id
-        )["results"]
+        response = self.client.data_sources.query(
+            data_source_id=self.data_source_id,
+            page_size=page_size,
+            **kwargs
+        )
+
+        return response["results"]
 
     def query_database(self, **kwargs):
         """
