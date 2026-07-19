@@ -5,6 +5,9 @@ from app.clients import notion
 from app.clients.notion.mapper import NotionMapper
 from app.services.task_service import TaskService
 from app.services import task_service
+from app.services.scheduling import scheduler
+from app.services.scheduling.scheduler import Scheduler
+
 
 
 
@@ -26,18 +29,38 @@ def main():
 
     task_service = TaskService(tasks)
 
-    pending_tasks = task_service.get_pending()
+    # pending_tasks = task_service.get_pending()
 
-    print(f"Pending Tasks: {len(pending_tasks)}\n")
+    # print(f"Pending Tasks: {len(pending_tasks)}\n")
 
-    for task in task_service.sort_by_due_date():
-        if not task.is_completed:
+    # for task in task_service.sort_by_due_date():
+    #     if not task.is_completed:
+    #         print(
+    #             f"{task.due_date} | "
+    #             f"{task.course} | "
+    #             f"{task.title} | "
+    #             f"{task.size}"
+    #         )
+
+
+    scheduler = Scheduler()
+
+    plan = scheduler.create_plan(
+        task_service.get_pending()
+    )
+
+    print("\n📅 Weekly Plan\n")
+
+    for day, tasks in plan.items():
+
+        print(day)
+
+        for task in tasks:
             print(
-                f"{task.due_date} | "
-                f"{task.course} | "
-                f"{task.title} | "
-                f"{task.size}"
+                f"   • {task.title}"
             )
+
+        print()
 
 
 if __name__ == "__main__":

@@ -31,6 +31,7 @@ class Task(BaseModel):
         Converts the task size into an estimated duration.
         """
 
+        # TODO: Change size to reflect Notion state 
         mapping = {
             "XS": 0.5,
             "S": 1,
