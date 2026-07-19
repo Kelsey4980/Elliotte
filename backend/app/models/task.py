@@ -33,11 +33,11 @@ class Task(BaseModel):
 
         # TODO: Change size to reflect Notion state 
         mapping = {
-            "XS": 0.5,
-            "S": 1,
-            "M": 2,
-            "L": 4,
-            "XL": 8,
+            "Tiny": 0.5,
+            "Small": 1,
+            "Medium": 2,
+            "Large": 4,
+            "Huge": 8,
         }
 
         return mapping.get(self.size, 1)

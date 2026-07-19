@@ -1,24 +1,42 @@
-from collections import defaultdict
-from datetime import date
+from datetime import datetime, timedelta
+
+from app.models.schedule_block import ScheduleBlock
 from app.models.task import Task
 
 
 class Scheduler:
     """
-    Creates a simple weekly plan.
+    Creates a schedule from a list of tasks.
     """
 
-    def create_plan(
+    def create_blocks(
         self,
-        tasks: list[Task]
-    ) -> dict[date, list[Task]]:
+        tasks: list[Task],
+        start: datetime,
+    ) -> list[ScheduleBlock]:
 
-        schedule = defaultdict(list)
+        blocks: list[ScheduleBlock] = []
 
-        for task in sorted(
-            tasks,
-            key=lambda t: t.due_date or date.max
-        ):
-            schedule[task.due_date].append(task)
+        current = start.replace(
+            hour=9,
+            minute=0,
+            second=0,
+            microsecond=0,
+        )
 
-        return schedule
+        for task in tasks:
+
+            duration = timedelta(hours=task.estimated_hours)
+
+            block = ScheduleBlock(
+                title=task.title,
+                start=current,
+                end=current + duration,
+                task=task,
+            )
+
+            blocks.append(block)
+
+            current += duration
+
+        return blocks
