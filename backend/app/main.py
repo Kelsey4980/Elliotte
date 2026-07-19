@@ -3,6 +3,9 @@ from pprint import pprint
 from app.clients.notion.client import NotionClient
 from app.clients import notion
 from app.clients.notion.mapper import NotionMapper
+from app.services.task_service import TaskService
+from app.services import task_service
+
 
 
 def main():
@@ -15,28 +18,26 @@ def main():
     
     # results = notion.client.search()
 
-    pages = notion.get_pages(page_size=5)
+    pages = notion.get_pages(page_size=20)
 
     print(f"Successfully retrieved {len(pages)} pages!\n")
 
     tasks = [NotionMapper.to_task(page) for page in pages]
 
-    print(f"Successfully retrieved {len(tasks)} tasks\n")
+    task_service = TaskService(tasks)
 
-    for task in tasks:
-        print(task)
+    pending_tasks = task_service.get_pending()
 
-    # for page in pages:
-    #     print("=" * 60)
+    print(f"Pending Tasks: {len(pending_tasks)}\n")
 
-    #     print("ID:", page["id"])
-
-    #     properties = page["properties"]
-
-    #     print("Properties:")
-
-    #     for name, value in properties.items():
-    #         print(f"  • {name}: {value['type']}")
+    for task in task_service.sort_by_due_date():
+        if not task.is_completed:
+            print(
+                f"{task.due_date} | "
+                f"{task.course} | "
+                f"{task.title} | "
+                f"{task.size}"
+            )
 
 
 if __name__ == "__main__":
