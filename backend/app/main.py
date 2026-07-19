@@ -127,6 +127,28 @@ def main():
             f"{slot.end:%I:%M %p}"
             f" ({slot.duration_hours:.1f} hrs)"
         )
+    
+    # ----------------------------
+    # Grouped Events
+    # ----------------------------
+
+    grouped = service.group_events_by_day(events)
+
+    print("\nGrouped Events\n")
+
+    for day, day_events in grouped.items():
+
+        print(day)
+
+        for event in day_events:
+
+            print(
+                f"   {event.start:%H:%M}"
+                f" - "
+                f"{event.end:%H:%M}"
+                f" | "
+                f"{event.title}"
+            )
 
 
 if __name__ == "__main__":
