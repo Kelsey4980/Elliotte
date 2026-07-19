@@ -7,6 +7,9 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
+from app.models.calendar_event import CalendarEvent
+from app.clients.google_calendar.mapper import GoogleCalendarMapper
+
 
 class GoogleCalendarClient:
     """
@@ -77,11 +80,13 @@ class GoogleCalendarClient:
     def get_events(
         self,
         max_results: int = 10,
-    ):
+    ) -> list[CalendarEvent]:
+
+        from datetime import datetime
 
         now = datetime.utcnow().isoformat() + "Z"
 
-        events = (
+        response = (
             self.service.events()
             .list(
                 calendarId="primary",
@@ -93,4 +98,7 @@ class GoogleCalendarClient:
             .execute()
         )
 
-        return events["items"]
+        return [
+            GoogleCalendarMapper.to_calendar_event(event)
+            for event in response["items"]
+        ]

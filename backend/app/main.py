@@ -16,7 +16,10 @@ from app.services.planning.scheduler import Scheduler
 from app.services.planning.planner import Planner
 
 from app.clients.google_calendar.client import GoogleCalendarClient
+from app.clients.google_calendar.mapper import GoogleCalendarMapper
+from app.models.calendar_event import CalendarEvent
 
+from app.services.calendar.time_slot_service import TimeSlotService
 
 def main():
 
@@ -94,19 +97,35 @@ def main():
 
     events = calendar.get_events()
 
-    print("\n📅 Google Calendar\n")
+    print("\n📅 Busy Events\n")
 
     for event in events:
 
-        start = event["start"].get(
-            "dateTime",
-            event["start"].get("date")
+        print(
+            f"{event.start:%I:%M %p}"
+            f" -> "
+            f"{event.end:%I:%M %p}"
+            f" | "
+            f"{event.title}"
         )
+    
+    # ----------------------------
+    # Time Slots
+    # ----------------------------
+
+    service = TimeSlotService()
+
+    slots = service.get_free_time(events)
+
+    print("\n📅 Free Time Slots\n")
+
+    for slot in slots:
 
         print(
-            start,
-            "-",
-            event["summary"]
+            f"{slot.start:%I:%M %p}"
+            f" -> "
+            f"{slot.end:%I:%M %p}"
+            f" ({slot.duration_hours:.1f} hrs)"
         )
 
 
