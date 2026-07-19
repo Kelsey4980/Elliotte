@@ -121,12 +121,13 @@ def main():
 
     service = TimeSlotService(preferences=preferences)
 
-    slots = service.generate_time_slots(events)
+    availability = service.generate_time_slots(events)
+
+    print(availability.total_free_hours)
 
     print("\n📅 Free Time Slots\n")
 
-    for slot in slots:
-
+    for slot in availability.slots:
         print(
             f"[{slot.start:%A}] "
             f"{slot.start:%I:%M %p}"
@@ -134,6 +135,20 @@ def main():
             f"{slot.end:%I:%M %p}"
             f" ({slot.duration_hours:.1f} hrs)"
         )
+
+    # slots = service.generate_time_slots(events)
+
+    # print("\n📅 Free Time Slots\n")
+
+    # for slot in slots:
+
+    #     print(
+    #         f"[{slot.start:%A}] "
+    #         f"{slot.start:%I:%M %p}"
+    #         f" -> "
+    #         f"{slot.end:%I:%M %p}"
+    #         f" ({slot.duration_hours:.1f} hrs)"
+    #     )
     
     # ----------------------------
     # Grouped Events
