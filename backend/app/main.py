@@ -20,6 +20,7 @@ from app.clients.google_calendar.mapper import GoogleCalendarMapper
 from app.models.calendar_event import CalendarEvent
 
 from app.services.calendar.time_slot_service import TimeSlotService
+from app.models.user_preferences import UserPreferences
 
 def main():
 
@@ -113,9 +114,14 @@ def main():
     # Time Slots
     # ----------------------------
 
-    service = TimeSlotService()
+    preferences = UserPreferences(
+        work_start=8,
+        work_end=18,
+    )
 
-    slots = service.get_free_time(events)
+    service = TimeSlotService(preferences=preferences)
+
+    slots = service.generate_time_slots(events)
 
     print("\n📅 Free Time Slots\n")
 

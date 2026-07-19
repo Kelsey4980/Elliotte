@@ -3,14 +3,23 @@ from datetime import datetime
 
 from app.models.calendar_event import CalendarEvent
 from app.models.time_slot import TimeSlot
+from app.models.user_preferences import UserPreferences
 
 
 class TimeSlotService:
 
-    WORK_START = 9
-    WORK_END = 21
+    def __init__(
+        self,
+        preferences: UserPreferences | None = None,
+    ):
 
-    def get_free_time(
+        self.preferences = (
+            preferences
+            if preferences
+            else UserPreferences()
+        )
+
+    def generate_time_slots(
         self,
         events: list[CalendarEvent],
     ) -> list[TimeSlot]:
@@ -60,7 +69,7 @@ class TimeSlotService:
             current_day.year,
             current_day.month,
             current_day.day,
-            self.WORK_START,
+            self.preferences.work_start,
             tzinfo=tz,
         )
 
@@ -68,7 +77,7 @@ class TimeSlotService:
             current_day.year,
             current_day.month,
             current_day.day,
-            self.WORK_END,
+            self.preferences.work_end,
             tzinfo=tz,
         )
 
