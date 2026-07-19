@@ -128,6 +128,7 @@ def main():
     for slot in slots:
 
         print(
+            f"[{slot.start:%A}] "
             f"{slot.start:%I:%M %p}"
             f" -> "
             f"{slot.end:%I:%M %p}"

@@ -79,7 +79,7 @@ class GoogleCalendarClient:
 
     def get_events(
         self,
-        max_results: int = 10,
+        max_results: int = 20,
     ) -> list[CalendarEvent]:
 
         from datetime import datetime
