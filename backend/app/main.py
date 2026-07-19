@@ -1,3 +1,4 @@
+from calendar import calendar
 from pprint import pprint
 from datetime import datetime, timedelta
 
@@ -13,6 +14,8 @@ from app.services.planning import scheduler
 from app.services.planning.scheduler import Scheduler
 
 from app.services.planning.planner import Planner
+
+from app.clients.google_calendar.client import GoogleCalendarClient
 
 
 def main():
@@ -81,6 +84,29 @@ def main():
 
         print(
             f"{block.title}\n"
+        )
+
+    # ----------------------------
+    # Connect to Google Calendar
+    # ----------------------------
+
+    calendar = GoogleCalendarClient()
+
+    events = calendar.get_events()
+
+    print("\n📅 Google Calendar\n")
+
+    for event in events:
+
+        start = event["start"].get(
+            "dateTime",
+            event["start"].get("date")
+        )
+
+        print(
+            start,
+            "-",
+            event["summary"]
         )
 
 
