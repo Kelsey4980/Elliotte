@@ -9,8 +9,10 @@ from app.clients.notion.mapper import NotionMapper
 from app.services import task_service
 from app.services.task_service import TaskService
 
-from app.services.scheduling import scheduler
-from app.services.scheduling.scheduler import Scheduler
+from app.services.planning import scheduler
+from app.services.planning.scheduler import Scheduler
+
+from app.services.planning.planner import Planner
 
 
 def main():
@@ -48,33 +50,38 @@ def main():
     # Create schedule
     # ----------------------------
 
-    scheduler = Scheduler()
+    # scheduler = Scheduler()
 
-    blocks = scheduler.create_blocks(pending_tasks, start=datetime.now())
+    # blocks = scheduler.create_blocks(
+    #     pending_tasks,
+    #     start=datetime.now()
+    # )
+
+    planner = Planner()
+
+    weekly_plan = planner.create_weekly_plan(pending_tasks, start=datetime.now())
 
     # ----------------------------
     # Display schedule
     # ----------------------------
 
-    print("📅 Schedule\n")
+    print("📅 Weekly Plan\n")
 
-    for block in blocks:
+    for block in weekly_plan.blocks:
 
         print(
-            f"{block.start:%A %b %d}"
+            f"{block.start:%A}"
         )
 
         print(
-            f"  {block.start:%I:%M %p}"
+            f"{block.start:%I:%M %p}"
             f" - "
             f"{block.end:%I:%M %p}"
         )
 
         print(
-            f"  {block.title}"
+            f"{block.title}\n"
         )
-
-        print()
 
 
 if __name__ == "__main__":

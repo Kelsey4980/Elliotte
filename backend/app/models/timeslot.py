@@ -3,8 +3,7 @@ from datetime import time
 from pydantic import BaseModel
 
 
-class Availability(BaseModel):
-    weekday: int
+class TimeSlot(BaseModel):
 
     start_time: time
 
