@@ -50,6 +50,9 @@ class TimeSlotService:
         for event in events:
 
             grouped[event.start.date()].append(event)
+        
+        for day_events in grouped.values():
+            day_events.sort(key=lambda event: event.start)
 
         return dict(grouped)
 
@@ -62,8 +65,6 @@ class TimeSlotService:
 
         if not events:
             return slots
-
-        events.sort(key=lambda event: event.start)
 
         current_day = events[0].start.date()
 
@@ -104,7 +105,7 @@ class TimeSlotService:
             event_start = max(event.start, day_start)
             event_end = min(event.end, day_end)
 
-            if event_start > current:
+            if current < event_start:
 
                 slots.append(
                     TimeSlot(

@@ -3,6 +3,7 @@ from zoneinfo import ZoneInfo
 
 from app.models.calendar_event import CalendarEvent
 
+LOCAL_TZ = ZoneInfo("Asia/Singapore")
 
 class GoogleCalendarMapper:
     """
@@ -32,19 +33,33 @@ class GoogleCalendarMapper:
         if all_day:
 
             start_dt = datetime.fromisoformat(start).replace(
-                tzinfo=ZoneInfo("Asia/Manila")
+                tzinfo=LOCAL_TZ
             )
 
             end_dt = datetime.fromisoformat(end).replace(
-                tzinfo=ZoneInfo("Asia/Manila")
+                tzinfo=LOCAL_TZ
             )
 
         else:
 
-            start_dt = datetime.fromisoformat(start)
+            start_dt = (
+                datetime.fromisoformat(start)
+                .astimezone(LOCAL_TZ)
+            )
 
-            end_dt = datetime.fromisoformat(end)
+            end_dt = (
+                datetime.fromisoformat(end)
+                .astimezone(LOCAL_TZ)
+            )
 
+        print(event["summary"])
+
+        # print(event["start"])
+        # print(event["end"])
+        print("START_DT and TZINFO:")
+        print(start_dt)
+        print(start_dt.tzinfo)
+        print()
 
         return CalendarEvent(
             id=event["id"],
