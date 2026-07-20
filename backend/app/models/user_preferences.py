@@ -1,5 +1,7 @@
 from pydantic import BaseModel
 
+from app.models.calendar_preference import CalendarPreference
+
 
 class UserPreferences(BaseModel):
     """
@@ -16,3 +18,5 @@ class UserPreferences(BaseModel):
     minimum_block_minutes: int = 30
 
     break_after_hours: float = 2.0
+
+    calendar_preferences: list[CalendarPreference]
