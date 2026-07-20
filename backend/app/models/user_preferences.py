@@ -9,7 +9,7 @@ class UserPreferences(BaseModel):
     """
 
     work_start: int = 9
-    work_end: int = 21
+    work_end: int = 20
 
     lunch_start: int = 12
     lunch_end: int = 13

@@ -113,8 +113,8 @@ def main():
     # ----------------------------
 
     preferences = UserPreferences(
-        work_start=8,
-        work_end=18,
+        work_start=9,
+        work_end=20,
     )
 
     # print("\nMerged Events\n")
@@ -163,24 +163,24 @@ def main():
     # Grouped Events
     # ----------------------------
 
-    # grouped = service.group_events_by_day(events)
+    grouped = service.group_events_by_day(events)
 
 
-    # print("\nGrouped Events\n")
+    print("\nGrouped Events\n")
 
-    # for day, day_events in grouped.items():
+    for day, day_events in grouped.items():
 
-    #     print(day)
+        print(day)
 
-    #     for event in day_events:
+        for event in day_events:
 
-    #         print(
-    #             f"   {event.start:%H:%M}"
-    #             f" - "
-    #             f"{event.end:%H:%M}"
-    #             f" | "
-    #             f"{event.title}"
-    #         )
+            print(
+                f"   {event.start:%H:%M}"
+                f" - "
+                f"{event.end:%H:%M}"
+                f" | "
+                f"{event.title}"
+            )
     
     # ----------------------------
     # Planner

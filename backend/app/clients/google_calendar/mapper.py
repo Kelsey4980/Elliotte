@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 from app.models.calendar_event import CalendarEvent
@@ -28,9 +28,9 @@ class GoogleCalendarMapper:
             event["end"].get("date")
         )
 
-        all_day = "date" in event["start"]
+        google_all_day = "date" in event["start"]
 
-        if all_day:
+        if google_all_day:
 
             start_dt = datetime.fromisoformat(start).replace(
                 tzinfo=LOCAL_TZ
@@ -52,6 +52,18 @@ class GoogleCalendarMapper:
                 .astimezone(LOCAL_TZ)
             )
 
+        #
+        # Also treat midnight-to-midnight timed events as all-day.
+        #
+        all_day = (
+            google_all_day
+            or (
+                start_dt.time() == datetime.min.time()
+                and end_dt.time() == datetime.min.time()
+                and (end_dt - start_dt) >= timedelta(days=1)
+            )
+        )
+        
         return CalendarEvent(
             id=event["id"],
             title=event.get("summary", "(No Title)"),
