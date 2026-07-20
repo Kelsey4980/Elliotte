@@ -2,10 +2,10 @@ from datetime import timedelta
 
 from app.models.schedule_block import ScheduleBlock
 from app.models.task import Task
-from app.models.time_slot import TimeSlot
 from app.models.weekly_availability import WeeklyAvailability
 from app.services.planning.task_estimator import TaskEstimator
 
+ZERO = timedelta()
 
 class Scheduler:
     """
@@ -33,37 +33,51 @@ class Scheduler:
 
         for task in tasks:
 
-            scheduled = False
-
-            duration = timedelta(
+            estimated = timedelta(
                 hours=self.estimator.estimate_hours(task)
             )
 
+            remaining = estimated
+
+            part = 1
+
             for slot in slots:
+
+                if remaining <= ZERO:
+                    break
 
                 available = slot.end - slot.start
 
-                if available >= duration:
+                if available <= ZERO:
+                    continue
 
-                    block = ScheduleBlock(
-                        title=task.title,
-                        start=slot.start,
-                        end=slot.start + duration,
-                        task=task,
-                    )
+                work = min(
+                    available,
+                    remaining,
+                )
 
-                    blocks.append(block)
+                title = task.title
 
-                    scheduled = True
+                if part > 1:
+                    title += f" (Part {part})"  
 
-                    #
-                    # Shrink the remaining slot.
-                    #
-                    slot.start = block.end
+                block = ScheduleBlock(
+                    title=title,
+                    start=slot.start,
+                    end=slot.start + work,
+                    task=task,
+                )
 
-                    break
-            
-            if not scheduled:
-                unscheduled.append(task)
+                blocks.append(block)
+
+                #
+                # Shrink the remaining slot.
+                #
+                slot.start = block.end
+                part += 1
+                remaining -= work
+
+            if remaining > timedelta():
+                unscheduled.append(task)    
 
         return blocks, unscheduled

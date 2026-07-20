@@ -49,6 +49,6 @@ class Planner:
             blocks=blocks,
             unscheduled_tasks=unscheduled,
             total_tasks=len(tasks),
-            scheduled_tasks=len(blocks),
+            scheduled_tasks = len(tasks) - len(unscheduled),
             scheduled_hours=scheduled_hours,
         )
