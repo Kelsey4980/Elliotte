@@ -117,6 +117,17 @@ def main():
         work_end=18,
     )
 
+    print("\nMerged Events\n")
+
+    for event in events:
+        print(
+            f"{event.start:%Y-%m-%d %H:%M}"
+            f" -> "
+            f"{event.end:%H:%M}"
+            f" | "
+            f"{event.title}"
+        )
+
     service = TimeSlotService(preferences=preferences)
 
     availability = service.generate_time_slots(events)

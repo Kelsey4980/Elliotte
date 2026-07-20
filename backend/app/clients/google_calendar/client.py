@@ -1,5 +1,5 @@
 from pathlib import Path
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -79,10 +79,6 @@ class GoogleCalendarClient:
             credentials=self.credentials
         )
 
-        for calendar in self.get_calendars():
-
-            events = self.get_events_from_calendar(calendar["id"])
-
     def get_events(
         self, 
         days: int = 7
@@ -114,14 +110,21 @@ class GoogleCalendarClient:
         days: int = 7,
     ) -> list[CalendarEvent]:
 
-        now = datetime.utcnow().isoformat() + "Z"
+        now = datetime.now(UTC)
+
+        start_of_today = now.replace(
+            hour=0,
+            minute=0,
+            second=0,
+            microsecond=0,
+        )
 
         response = (
             self.service.events()
             .list(
                 calendarId=calendar_id,
-                timeMin=now,
-                timeMax=(datetime.utcnow() + timedelta(days=days)).isoformat() + "Z",
+                timeMin=start_of_today.isoformat(),
+                timeMax=(start_of_today + timedelta(days=days)).isoformat(),
                 singleEvents=True,
                 orderBy="startTime",
             )
@@ -160,7 +163,7 @@ class GoogleCalendarClient:
     def create_elliotte_calendar(self):
 
         body = {
-            "summary": "Elliotte",
+            "summary": self.ELLIOTTE_CALENDAR_NAME,
             "timeZone": "Asia/Manila",
         }
 

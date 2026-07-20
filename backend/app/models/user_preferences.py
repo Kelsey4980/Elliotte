@@ -19,4 +19,4 @@ class UserPreferences(BaseModel):
 
     break_after_hours: float = 2.0
 
-    calendar_preferences: list[CalendarPreference]
+    # calendar_preferences: list[CalendarPreference]
