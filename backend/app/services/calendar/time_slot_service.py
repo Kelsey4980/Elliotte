@@ -1,6 +1,6 @@
 from collections import defaultdict
-from datetime import datetime
-from datetime import date
+from datetime import datetime, timedelta, date
+from zoneinfo import ZoneInfo
 
 from app.models.calendar_event import CalendarEvent
 from app.models.time_slot import TimeSlot
@@ -25,18 +25,29 @@ class TimeSlotService:
         self,
         events: list[CalendarEvent],
     ) -> WeeklyAvailability:
+        
 
         grouped = self.group_events_by_day(events)
 
         slots = []
 
-        for day in sorted(grouped):
+        start_day = min(event.start.date() for event in events)
+        end_day = max(event.start.date() for event in events)
 
-            day_events = grouped[day]
+        current = start_day
+
+        while current <= end_day:
+
+            day_events = grouped.get(current, [])
 
             slots.extend(
-                self.generate_daily_slots(day_events)
+                self.generate_daily_slots(
+                    current,
+                    day_events,
+                )
             )
+
+            current += timedelta(days=1)
 
         return self.build_availability(slots, grouped)
 
@@ -61,6 +72,7 @@ class TimeSlotService:
 
     def generate_daily_slots(
         self,
+        day: date,
         events: list[CalendarEvent],
     ) -> list[TimeSlot]:
 
@@ -69,9 +81,12 @@ class TimeSlotService:
         if not events:
             return slots
 
-        current_day = events[0].start.date()
+        current_day = day
 
-        tz = events[0].start.tzinfo
+        if events:
+            tz = events[0].start.tzinfo
+        else:
+            tz = ZoneInfo("Asia/Singapore")
 
         day_start = datetime(
             current_day.year,
