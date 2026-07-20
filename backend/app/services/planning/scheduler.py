@@ -20,16 +20,20 @@ class Scheduler:
         self,
         tasks: list[Task],
         availability: WeeklyAvailability,
-    ) -> list[ScheduleBlock]:
+    ) -> tuple[list[ScheduleBlock], list[Task]]:
 
         blocks: list[ScheduleBlock] = []
+
+        unscheduled = []
 
         #
         # Copy slots because we'll modify them.
         #
-        slots = availability.slots.copy()
+        slots = availability.model_copy(deep=True).slots
 
         for task in tasks:
+
+            scheduled = False
 
             duration = timedelta(
                 hours=self.estimator.estimate_hours(task)
@@ -50,11 +54,16 @@ class Scheduler:
 
                     blocks.append(block)
 
+                    scheduled = True
+
                     #
                     # Shrink the remaining slot.
                     #
                     slot.start = block.end
 
                     break
+            
+            if not scheduled:
+                unscheduled.append(task)
 
-        return blocks
+        return blocks, unscheduled

@@ -191,6 +191,24 @@ def main():
         )
 
         print(f"   {block.title}\n")
+    
+    print("\n📊 Planning Summary\n")
+
+    print(f"Total Tasks      : {plan.total_tasks}")
+    print(f"Scheduled        : {plan.scheduled_tasks}")
+    print(f"Unscheduled      : {len(plan.unscheduled_tasks)}")
+    print(f"Scheduled Hours  : {plan.scheduled_hours:.1f}")
+    print(f"Available Hours  : {availability.total_free_hours:.1f}")
+
+    if plan.unscheduled_tasks:
+
+        print("\n❌ Unscheduled Tasks\n")
+
+        for task in plan.unscheduled_tasks:
+
+            print(
+                f"- {task.title}"
+            )
 
 
 if __name__ == "__main__":

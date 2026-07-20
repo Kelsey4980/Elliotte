@@ -25,9 +25,14 @@ class Planner:
             tasks
         )
 
-        blocks = self.scheduler.schedule(
+        blocks, unscheduled = self.scheduler.schedule(
             ordered_tasks,
             availability,
+        )
+
+        scheduled_hours = sum(
+            block.duration_hours
+            for block in blocks
         )
 
         print("\nPriority Order\n")
@@ -41,5 +46,9 @@ class Planner:
             )
 
         return WeeklyPlan(
-            blocks=blocks
+            blocks=blocks,
+            unscheduled_tasks=unscheduled,
+            total_tasks=len(tasks),
+            scheduled_tasks=len(blocks),
+            scheduled_hours=scheduled_hours,
         )

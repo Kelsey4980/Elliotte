@@ -17,3 +17,10 @@ class ScheduleBlock(BaseModel):
     end: datetime
 
     task: Task
+
+    @property
+    def duration_hours(self) -> float:
+
+        return (
+            self.end - self.start
+        ).total_seconds() / 3600
