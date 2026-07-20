@@ -64,31 +64,27 @@ def main():
     #     start=datetime.now()
     # )
 
-    planner = Planner()
-
-    weekly_plan = planner.create_weekly_plan(pending_tasks, start=datetime.now())
-
     # ----------------------------
     # Display schedule
     # ----------------------------
 
-    print("📅 Weekly Plan\n")
+    # print("📅 Weekly Plan\n")
 
-    for block in weekly_plan.blocks:
+    # for block in weekly_plan.blocks:
 
-        print(
-            f"{block.start:%A}"
-        )
+    #     print(
+    #         f"{block.start:%A}"
+    #     )
 
-        print(
-            f"{block.start:%I:%M %p}"
-            f" - "
-            f"{block.end:%I:%M %p}"
-        )
+    #     print(
+    #         f"{block.start:%I:%M %p}"
+    #         f" - "
+    #         f"{block.end:%I:%M %p}"
+    #     )
 
-        print(
-            f"{block.title}\n"
-        )
+    #     print(
+    #         f"{block.title}\n"
+    #     )
 
     # ----------------------------
     # Connect to Google Calendar
@@ -98,17 +94,17 @@ def main():
 
     events = calendar.get_events()
 
-    print("\n📅 Busy Events\n")
+    # print("\n📅 Busy Events\n")
 
-    for event in events:
+    # for event in events:
 
-        print(
-            f"{event.start:%I:%M %p}"
-            f" -> "
-            f"{event.end:%I:%M %p}"
-            f" | "
-            f"{event.title}"
-        )
+    #     print(
+    #         f"{event.start:%I:%M %p}"
+    #         f" -> "
+    #         f"{event.end:%I:%M %p}"
+    #         f" | "
+    #         f"{event.title}"
+    #     )
     
     # ----------------------------
     # Time Slots
@@ -171,6 +167,30 @@ def main():
                 f" | "
                 f"{event.title}"
             )
+    
+    # ----------------------------
+    # Planner
+    # ----------------------------
+
+    planner = Planner()
+
+    plan = planner.create_weekly_plan(
+        pending_tasks,
+        availability,
+    )
+
+    print("\n📅 Elliotte's Weekly Plan\n")
+
+    for block in plan.blocks:
+
+        print(
+            f"[{block.start:%A}] "
+            f"{block.start:%I:%M %p}"
+            f" - "
+            f"{block.end:%I:%M %p}"
+        )
+
+        print(f"   {block.title}\n")
 
 
 if __name__ == "__main__":

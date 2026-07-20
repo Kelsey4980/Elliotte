@@ -1,42 +1,60 @@
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from app.models.schedule_block import ScheduleBlock
 from app.models.task import Task
+from app.models.time_slot import TimeSlot
+from app.models.weekly_availability import WeeklyAvailability
+from app.services.planning.task_estimator import TaskEstimator
 
 
 class Scheduler:
     """
-    Creates a schedule from a list of tasks.
+    Schedules tasks into available time slots.
     """
 
-    def create_blocks(
+    def __init__(self):
+
+        self.estimator = TaskEstimator()
+
+    def schedule(
         self,
         tasks: list[Task],
-        start: datetime,
+        availability: WeeklyAvailability,
     ) -> list[ScheduleBlock]:
 
         blocks: list[ScheduleBlock] = []
 
-        current = start.replace(
-            hour=9,
-            minute=0,
-            second=0,
-            microsecond=0,
-        )
+        #
+        # Copy slots because we'll modify them.
+        #
+        slots = availability.slots.copy()
 
         for task in tasks:
 
-            duration = timedelta(hours=task.estimated_hours)
-
-            block = ScheduleBlock(
-                title=task.title,
-                start=current,
-                end=current + duration,
-                task=task,
+            duration = timedelta(
+                hours=self.estimator.estimate_hours(task)
             )
 
-            blocks.append(block)
+            for slot in slots:
 
-            current += duration
+                available = slot.end - slot.start
+
+                if available >= duration:
+
+                    block = ScheduleBlock(
+                        title=task.title,
+                        start=slot.start,
+                        end=slot.start + duration,
+                        task=task,
+                    )
+
+                    blocks.append(block)
+
+                    #
+                    # Shrink the remaining slot.
+                    #
+                    slot.start = block.end
+
+                    break
 
         return blocks
