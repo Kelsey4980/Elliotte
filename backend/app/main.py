@@ -17,10 +17,12 @@ from app.services.planning.planner import Planner
 
 from app.clients.google_calendar.client import GoogleCalendarClient
 from app.clients.google_calendar.mapper import GoogleCalendarMapper
+from app.clients.google_calendar.writer import CalendarWriter
 from app.models.calendar_event import CalendarEvent
 
 from app.services.calendar.time_slot_service import TimeSlotService
 from app.models.user_preferences import UserPreferences
+
 
 def main():
 
@@ -209,6 +211,16 @@ def main():
             print(
                 f"- {task.title}"
             )
+
+    #----------------------------
+    # Calendar Writer
+    #----------------------------
+
+    writer = CalendarWriter()
+
+    writer.create_event(
+        plan.blocks[0]
+    )
 
 
 if __name__ == "__main__":
