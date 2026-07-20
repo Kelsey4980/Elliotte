@@ -121,7 +121,7 @@ def main():
 
     availability = service.generate_time_slots(events)
 
-    print(availability.total_free_hours)
+    grouped = service.group_events_by_day(events)
 
     print("\n📅 Free Time Slots\n")
 
@@ -152,23 +152,24 @@ def main():
     # Grouped Events
     # ----------------------------
 
-    grouped = service.group_events_by_day(events)
+    # grouped = service.group_events_by_day(events)
 
-    print("\nGrouped Events\n")
 
-    for day, day_events in grouped.items():
+    # print("\nGrouped Events\n")
 
-        print(day)
+    # for day, day_events in grouped.items():
 
-        for event in day_events:
+    #     print(day)
 
-            print(
-                f"   {event.start:%H:%M}"
-                f" - "
-                f"{event.end:%H:%M}"
-                f" | "
-                f"{event.title}"
-            )
+    #     for event in day_events:
+
+    #         print(
+    #             f"   {event.start:%H:%M}"
+    #             f" - "
+    #             f"{event.end:%H:%M}"
+    #             f" | "
+    #             f"{event.title}"
+    #         )
     
     # ----------------------------
     # Planner
@@ -181,18 +182,18 @@ def main():
         availability,
     )
 
-    print("\n📅 Elliotte's Weekly Plan\n")
+    # print("\n📅 Elliotte's Weekly Plan\n")
 
-    for block in plan.blocks:
+    # for block in plan.blocks:
 
-        print(
-            f"[{block.start:%A}] "
-            f"{block.start:%I:%M %p}"
-            f" - "
-            f"{block.end:%I:%M %p}"
-        )
+    #     print(
+    #         f"[{block.start:%A}] "
+    #         f"{block.start:%I:%M %p}"
+    #         f" - "
+    #         f"{block.end:%I:%M %p}"
+    #     )
 
-        print(f"   {block.title}\n")
+    #     print(f"   {block.title}\n")
     
     print("\n📊 Planning Summary\n")
 

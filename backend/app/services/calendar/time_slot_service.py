@@ -89,16 +89,31 @@ class TimeSlotService:
 
         for event in events:
 
-            if event.start > current:
+            #
+            # Ignore events completely outside work hours.
+            #
+            if event.end <= day_start:
+                continue
+
+            if event.start >= day_end:
+                continue
+
+            #
+            # Clamp the event to the work day.
+            #
+            event_start = max(event.start, day_start)
+            event_end = min(event.end, day_end)
+
+            if event_start > current:
 
                 slots.append(
                     TimeSlot(
                         start=current,
-                        end=event.start,
+                        end=event_start,
                     )
                 )
 
-            current = max(current, event.end)
+            current = max(current, event_end)
 
         if current < day_end:
 

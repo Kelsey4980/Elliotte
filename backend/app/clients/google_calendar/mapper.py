@@ -45,11 +45,6 @@ class GoogleCalendarMapper:
 
             end_dt = datetime.fromisoformat(end)
 
-        print(
-            event.get("summary"),
-            start_dt,
-            start_dt.tzinfo,
-        )
 
         return CalendarEvent(
             id=event["id"],

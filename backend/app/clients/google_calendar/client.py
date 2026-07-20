@@ -1,5 +1,5 @@
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -79,9 +79,13 @@ class GoogleCalendarClient:
             credentials=self.credentials
         )
 
+        for calendar in self.get_calendars():
+
+            events = self.get_events_from_calendar(calendar["id"])
+
     def get_events(
         self, 
-        max_results: int = 20
+        days: int = 7
     ) -> list[CalendarEvent]:
 
         events: list[CalendarEvent] = []
@@ -96,15 +100,8 @@ class GoogleCalendarClient:
             events.extend(
                 self.get_events_from_calendar(
                     calendar_id=calendar["id"],
-                    max_results=max_results,
+                    days=days,
                 )
-            )
-
-        for event in events:
-            print(
-                event.title,
-                event.start,
-                event.start.tzinfo,
             )
 
         events.sort(key=lambda event: event.start)
@@ -114,7 +111,7 @@ class GoogleCalendarClient:
     def get_events_from_calendar(
         self,
         calendar_id: str,
-        max_results: int = 20,
+        days: int = 7,
     ) -> list[CalendarEvent]:
 
         now = datetime.utcnow().isoformat() + "Z"
@@ -124,7 +121,7 @@ class GoogleCalendarClient:
             .list(
                 calendarId=calendar_id,
                 timeMin=now,
-                maxResults=max_results,
+                timeMax=(datetime.utcnow() + timedelta(days=days)).isoformat() + "Z",
                 singleEvents=True,
                 orderBy="startTime",
             )

@@ -45,8 +45,4 @@ class CalendarWriter:
             .execute()
         )
 
-        for calendar in self.client.get_calendars():
-
-            print(calendar["summary"])
-
         return created_event
