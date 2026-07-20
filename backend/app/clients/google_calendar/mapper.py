@@ -52,15 +52,6 @@ class GoogleCalendarMapper:
                 .astimezone(LOCAL_TZ)
             )
 
-        print(event["summary"])
-
-        # print(event["start"])
-        # print(event["end"])
-        print("START_DT and TZINFO:")
-        print(start_dt)
-        print(start_dt.tzinfo)
-        print()
-
         return CalendarEvent(
             id=event["id"],
             title=event.get("summary", "(No Title)"),

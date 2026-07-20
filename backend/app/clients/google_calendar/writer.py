@@ -13,9 +13,13 @@ class CalendarWriter:
     ):
 
         event = {
-            "summary": f"📚 {block.title}",
+            "summary": block.title,
 
-            "description": "Created by Elliotte",
+            "description": (
+                "Created by Elliotte\n\n"
+                f"Priority: {block.task.size}\n"
+                f"Due: {block.task.due_date:%Y-%m-%d}"
+            ),
 
             "extendedProperties": {
                 "private": {
@@ -46,3 +50,47 @@ class CalendarWriter:
         )
 
         return created_event
+
+    def create_schedule(
+        self,
+        blocks: list[ScheduleBlock],
+    ) -> None:
+
+        for block in blocks:
+            print(f"✓ {block.title}")
+            self.create_event(block)
+
+    def clear_schedule(self):
+
+        calendar = self.client.get_or_create_elliotte_calendar()
+
+        response = (
+            self.client.service.events()
+            .list(
+                calendarId=calendar["id"],
+            )
+            .execute()
+        )
+
+        for event in response.get("items", []):
+
+            self.client.service.events().delete(
+                calendarId=calendar["id"],
+                eventId=event["id"],
+            ).execute()
+
+    def sync(
+        self,
+        blocks: list[ScheduleBlock],
+    ):
+        
+        print("\n📤 Syncing to Google Calendar...\n")
+
+        self.clear_schedule()
+
+        self.create_schedule(blocks)
+
+        print(
+            f"\nSuccessfully created "
+            f"{len(blocks)} events."
+        )

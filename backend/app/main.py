@@ -223,6 +223,8 @@ def main():
             print(
                 f"- {task.title}"
             )
+    
+    print()
 
     #----------------------------
     # Calendar Writer
@@ -230,8 +232,12 @@ def main():
 
     writer = CalendarWriter()
 
-    writer.create_event(
-        plan.blocks[0]
+    # writer.create_schedule(
+    #     plan.blocks
+    # )
+    # writer.clear_schedule()
+    writer.sync(
+        plan.blocks
     )
 
     
