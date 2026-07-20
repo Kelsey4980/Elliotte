@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from app.models.calendar_event import CalendarEvent
 
@@ -28,10 +29,32 @@ class GoogleCalendarMapper:
 
         all_day = "date" in event["start"]
 
+        if all_day:
+
+            start_dt = datetime.fromisoformat(start).replace(
+                tzinfo=ZoneInfo("Asia/Manila")
+            )
+
+            end_dt = datetime.fromisoformat(end).replace(
+                tzinfo=ZoneInfo("Asia/Manila")
+            )
+
+        else:
+
+            start_dt = datetime.fromisoformat(start)
+
+            end_dt = datetime.fromisoformat(end)
+
+        print(
+            event.get("summary"),
+            start_dt,
+            start_dt.tzinfo,
+        )
+
         return CalendarEvent(
             id=event["id"],
             title=event.get("summary", "(No Title)"),
-            start=datetime.fromisoformat(start),
-            end=datetime.fromisoformat(end),
+            start=start_dt,
+            end=end_dt,
             all_day=all_day,
         )

@@ -32,13 +32,21 @@ class CalendarWriter:
             },
         }
 
+        calendar = self.client.get_or_create_elliotte_calendar()
+
+        calendar_id = calendar["id"]
+
         created_event = (
             self.service.events()
             .insert(
-                calendarId="primary",
+                calendarId=calendar_id,
                 body=event,
             )
             .execute()
         )
+
+        for calendar in self.client.get_calendars():
+
+            print(calendar["summary"])
 
         return created_event
