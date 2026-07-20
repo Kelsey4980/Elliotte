@@ -48,6 +48,9 @@ class TimeSlotService:
         grouped = defaultdict(list)
 
         for event in events:
+            
+            if event.all_day:
+                continue
 
             grouped[event.start.date()].append(event)
         

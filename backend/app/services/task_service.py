@@ -15,7 +15,10 @@ class TaskService:
         return [
             task
             for task in self.tasks
-            if not task.is_completed
+            if (
+                task.status != "Done"
+                and task.task_type == "Task"
+            )
         ]
 
     def get_completed(self) -> list[Task]:
