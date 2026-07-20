@@ -17,6 +17,10 @@ class GoogleCalendarClient:
 
     ELLIOTTE_CALENDAR_NAME = "Elliotte"
 
+    IGNORED_CALENDARS = {
+        ELLIOTTE_CALENDAR_NAME,
+    }
+
     SCOPES = [
         "https://www.googleapis.com/auth/calendar"
     ]
@@ -90,7 +94,7 @@ class GoogleCalendarClient:
 
         for calendar in self.get_calendars():
 
-            if calendar["id"] == elliotte["id"]:
+            if calendar["summary"] in self.IGNORED_CALENDARS:
                 continue
 
             events.extend(
