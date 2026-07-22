@@ -16,7 +16,9 @@ class ScheduleBlock(BaseModel):
 
     end: datetime
 
-    task: Task
+    task: Task | None = None
+
+    is_break: bool = False
 
     @property
     def duration_hours(self) -> float:

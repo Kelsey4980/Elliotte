@@ -14,9 +14,12 @@ class UserPreferences(BaseModel):
     lunch_start: int = 12
     lunch_end: int = 13
 
-    preferred_block_hours: float = 2.0
+    # preferred_block_hours: float = 2.0
+    max_session_hours: float = 2
+    break_minutes: int = 30
+    
     minimum_block_minutes: int = 30
 
-    break_after_hours: float = 2.0
+    # break_after_hours: float = 2.0
 
     # calendar_preferences: list[CalendarPreference]

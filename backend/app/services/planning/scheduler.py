@@ -4,6 +4,8 @@ from app.models.schedule_block import ScheduleBlock
 from app.models.task import Task
 from app.models.weekly_availability import WeeklyAvailability
 from app.services.planning.task_estimator import TaskEstimator
+from app.models.user_preferences import UserPreferences
+from app.models.time_slot import TimeSlot
 
 ZERO = timedelta()
 
@@ -12,15 +14,32 @@ class Scheduler:
     Schedules tasks into available time slots.
     """
 
-    def __init__(self):
+    def __init__(
+        self,
+        preferences: UserPreferences | None = None,
+    ):
 
         self.estimator = TaskEstimator()
+
+        self.preferences = (
+            preferences
+            if preferences
+            else UserPreferences()
+        )
 
     def schedule(
         self,
         tasks: list[Task],
         availability: WeeklyAvailability,
     ) -> tuple[list[ScheduleBlock], list[Task]]:
+        
+        max_session = timedelta(
+            hours=self.preferences.max_session_hours
+        )
+
+        break_length = timedelta(
+            minutes=self.preferences.break_minutes
+        )
 
         blocks: list[ScheduleBlock] = []
 
@@ -54,6 +73,7 @@ class Scheduler:
                 work = min(
                     available,
                     remaining,
+                    max_session,
                 )
 
                 title = task.title
@@ -73,11 +93,34 @@ class Scheduler:
                 #
                 # Shrink the remaining slot.
                 #
+                remaining -= work
                 slot.start = block.end
                 part += 1
-                remaining -= work
 
-            if remaining > timedelta():
-                unscheduled.append(task)    
+                minimum_work = timedelta(minutes=15)
+
+                if (
+                    remaining > ZERO
+                    and slot.end - slot.start >= break_length + minimum_work
+                ):
+
+                    break_block = self.create_break(slot, break_length)
+                    blocks.append(break_block)
+                    slot.start = break_block.end
+            
+            if remaining > ZERO:
+                unscheduled.append(task)
 
         return blocks, unscheduled
+    
+    def create_break(
+        self,
+        slot: TimeSlot,
+        break_length: timedelta,
+    ) -> ScheduleBlock:
+        return ScheduleBlock(
+            title="☕ Break (15 min)",
+            start=slot.start,
+            end=slot.start + break_length,
+            is_break=True,
+        )

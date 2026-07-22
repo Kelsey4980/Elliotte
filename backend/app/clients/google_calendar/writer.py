@@ -11,15 +11,20 @@ class CalendarWriter:
         self,
         block: ScheduleBlock,
     ):
+        
+        if block.is_break:
+            description = "Created by Elliotte\n\nBreak"
+        else:
+            description = (
+                "Created by Elliotte\n\n"
+                f"Priority: {block.task.size}\n"
+                f"Due: {block.task.due_date:%Y-%m-%d}"
+            )
 
         event = {
             "summary": block.title,
 
-            "description": (
-                "Created by Elliotte\n\n"
-                f"Priority: {block.task.size}\n"
-                f"Due: {block.task.due_date:%Y-%m-%d}"
-            ),
+            "description": description,
 
             "extendedProperties": {
                 "private": {
@@ -35,6 +40,9 @@ class CalendarWriter:
                 "dateTime": block.end.isoformat(),
             },
         }
+
+        if block.is_break:
+            event["colorId"] = "10"
 
         calendar = self.client.get_or_create_elliotte_calendar()
 
@@ -81,7 +89,7 @@ class CalendarWriter:
 
             if props.get("source") != "elliotte":
                 continue
-            
+
             self.client.service.events().delete(
                 calendarId=calendar["id"],
                 eventId=event["id"],
