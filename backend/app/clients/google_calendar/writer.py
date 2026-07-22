@@ -74,6 +74,14 @@ class CalendarWriter:
 
         for event in response.get("items", []):
 
+            props = (
+                event.get("extendedProperties", {})
+                    .get("private", {})
+            )
+
+            if props.get("source") != "elliotte":
+                continue
+            
             self.client.service.events().delete(
                 calendarId=calendar["id"],
                 eventId=event["id"],
