@@ -54,40 +54,39 @@ class Scheduler:
         continuous_work = ZERO
         last_work_end = None
 
+        # Iterate through tasks
         for task in tasks:
 
+            # Get duration of task
             remaining = timedelta(
                 hours=self.estimator.estimate_hours(task)
             )
 
             part = 1
 
+            # Iterate through available slots
             for slot in slots:
-
+                
+                # Exit if task is complete
                 if remaining <= ZERO:
                     break
 
-                #
                 # Skip empty slots.
-                #
                 if slot.end <= slot.start:
                     continue
 
-                #
+                # TODO: figure this out
                 # Natural break between slots.
-                #
                 if (
                     last_work_end is not None
                     and slot.start - last_work_end >= break_length
                 ):
                     continuous_work = ZERO
 
-                #
                 # Need a scheduled break?
-                #
                 if (
                     continuous_work >= max_session
-                    and slot.end - slot.start >= break_length + min_work
+                    and slot.end - slot.start >= break_length # + min_work
                 ):
 
                     break_block = self.create_break(
@@ -103,12 +102,12 @@ class Scheduler:
 
                 available = slot.end - slot.start
 
+                # Exit if no more available slots
                 if available <= ZERO:
                     continue
 
-                #
+                # TODO: figure this out too
                 # Only work until the session limit.
-                #
                 session_remaining = max_session - continuous_work
 
                 work = min(
@@ -117,11 +116,12 @@ class Scheduler:
                     session_remaining,
                 )
 
+                # Exit if no more work remaining
                 if work <= ZERO:
                     continue
 
+                # Append part # if task is split into multiple blocks
                 title = task.title
-
                 if part > 1:
                     title += f" (Part {part})"
 
@@ -141,6 +141,10 @@ class Scheduler:
                 remaining -= work
 
                 part += 1
+
+                print("block title = ", block.title)
+                print("continuous work = ", continuous_work)
+                print()
 
             if remaining > ZERO:
                 unscheduled.append(task)
